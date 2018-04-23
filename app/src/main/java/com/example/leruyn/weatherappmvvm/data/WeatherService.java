@@ -1,6 +1,6 @@
 package com.example.leruyn.weatherappmvvm.data;
 
-import com.example.leruyn.weatherappmvvm.Constant;
+import com.example.leruyn.weatherappmvvm.utils.Constant;
 
 import io.reactivex.Observable;
 import retrofit2.Call;

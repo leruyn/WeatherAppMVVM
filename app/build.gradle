@@ -23,9 +23,6 @@ android {
         enabled = true
     }
 
-    dexOptions {
-        javaMaxHeapSize "2g"
-    }
 
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
@@ -36,6 +33,9 @@ android {
         exclude 'META-INF/rxjava.properties'
     }
 
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -43,14 +43,12 @@ dependencies {
     implementation supportDependencies.design
     implementation supportDependencies.recyclerView
     implementation supportDependencies.cardView
-
     implementation retrofitDependencies.retrofit
     implementation retrofitDependencies.gson
     implementation retrofitDependencies.rxAdapterJava
-
     implementation rxDependencies.rxAndroid
     implementation rxDependencies.rxJava
-
     implementation circleImageView
     implementation glide
+    implementation eventbus
 }

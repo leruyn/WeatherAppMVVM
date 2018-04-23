@@ -1,4 +1,4 @@
-package com.example.leruyn.weatherappmvvm;
+package com.example.leruyn.weatherappmvvm.utils;
 
 /**
  * Created by LeRuyn on 4/22/2018.
