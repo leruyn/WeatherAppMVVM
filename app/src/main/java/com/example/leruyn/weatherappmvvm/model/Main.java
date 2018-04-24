@@ -7,10 +7,12 @@ package com.example.leruyn.weatherappmvvm.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Object Main
  */
-public class Main {
+public class Main  implements Serializable {
 
     @SerializedName("temp")
     @Expose

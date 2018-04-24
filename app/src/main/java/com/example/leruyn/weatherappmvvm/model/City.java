@@ -3,19 +3,21 @@ package com.example.leruyn.weatherappmvvm.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by LeRuyn on 4/22/2018.
  */
-public class City {
+public class City  implements Serializable {
     @SerializedName("id")
     @Expose
-    private Integer id;
+    public Integer id;
     @SerializedName("name")
     @Expose
-    private String name;
+    public String name;
     @SerializedName("country")
     @Expose
-    private String country;
+    public String country;
 
     public Integer getId() {
         return id;
