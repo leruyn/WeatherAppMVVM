@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">WeatherAppMVVM</string>
+
+    <string name="temp_value">%s\u00B0C</string>
 </resources>

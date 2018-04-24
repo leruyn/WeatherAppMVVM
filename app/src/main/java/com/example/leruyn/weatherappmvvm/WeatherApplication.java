@@ -27,7 +27,7 @@ public class WeatherApplication extends Application {
     private WeatherService weatherService;
     private Scheduler scheduler;
     private static Context contextApplication;
-    private static WeatherDao weatherDao;
+    public static WeatherDao weatherDao;
 
     private static WeatherApplication get(Context context) {
 
