@@ -1,4 +1,4 @@
-package com.example.leruyn.weatherappmvvm.utils;
+package com.example.leruyn.weatherappmvvm.utils.listener;
 
 import android.Manifest;
 import android.content.Context;
@@ -18,8 +18,9 @@ import java.util.TimerTask;
 
 public class MyLocation {
 
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 30;
-    Timer timer1;
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 60;
+    private static final long MIN_DISTANCE = 5000;
+//    Timer timer1;
     LocationManager lm;
     LocationResult locationResult;
     boolean gps_enabled = false;
@@ -62,17 +63,51 @@ public class MyLocation {
             return false;
         }
         if (gps_enabled)
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, 0, locationListenerGps);
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE, locationListenerGps);
         if (network_enabled)
-            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, 0, locationListenerNetwork);
-        timer1 = new Timer();
-        timer1.schedule(new GetLastLocation(), 10000);
+            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE, locationListenerNetwork);
+//        timer1 = new Timer();
+//        timer1.schedule(new GetLastLocation(), 5000);
+        Location net_loc = null, gps_loc = null;
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return false;
+        }
+        if (gps_enabled)
+            gps_loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if(network_enabled)
+            net_loc=lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+        //if there are both values use the latest one
+        if(gps_loc!=null && net_loc!=null){
+            if(gps_loc.getTime()>net_loc.getTime())
+                locationResult.gotLocation(gps_loc);
+            else
+                locationResult.gotLocation(net_loc);
+            return false;
+        }
+
+        if(gps_loc!=null){
+            locationResult.gotLocation(gps_loc);
+            return false;
+        }
+        if(net_loc!=null){
+            locationResult.gotLocation(net_loc);
+            return false;
+        }
+        locationResult.gotLocation(null);
         return true;
     }
 
     LocationListener locationListenerGps = new LocationListener() {
         public void onLocationChanged(Location location) {
-            timer1.cancel();
             locationResult.gotLocation(location);
 
 
@@ -92,7 +127,6 @@ public class MyLocation {
 
     LocationListener locationListenerNetwork = new LocationListener() {
         public void onLocationChanged(Location location) {
-            timer1.cancel();
             locationResult.gotLocation(location);
             // lm.removeUpdates(context);
             //   lm.removeUpdates(locationListenerGps);

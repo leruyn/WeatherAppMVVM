@@ -45,11 +45,11 @@ public class WeatherDao extends DatabaseHandler {
             Log.e("RLVVVVVV ", db.insert(TABLE_WEATHER, null, values) + "");
 
             Events.insertDataBase insertDataBase =
-                    new Events.insertDataBase(true);
+                    new Events.insertDataBase(weatherResponse);
             GlobalBus.getBus().post(insertDataBase);
         } catch (Exception e) {
             Events.insertDataBase insertDataBase =
-                    new Events.insertDataBase(false);
+                    new Events.insertDataBase(null);
             GlobalBus.getBus().post(insertDataBase);
             e.printStackTrace();
         }
@@ -63,7 +63,7 @@ public class WeatherDao extends DatabaseHandler {
      */
     public City getInfoLocation() {
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_WEATHER;
+        String selectQuery = "SELECT  "+KEY_NAME+", "+ KEY_COUNTRY+" FROM " + TABLE_WEATHER;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -72,10 +72,11 @@ public class WeatherDao extends DatabaseHandler {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                cityResponse.setName(cursor.getString(11));
-                cityResponse.setCountry(cursor.getString(12));
+                cityResponse.setName(cursor.getString(0));
+                cityResponse.setCountry(cursor.getString(1));
             } while (cursor.moveToNext());
         }
+
         return cityResponse;
 
     }
@@ -106,6 +107,7 @@ public class WeatherDao extends DatabaseHandler {
                 weatherModel.setMain(main);
 
             } while (cursor.moveToNext());
+            cursor.close();
         }
         return weatherModel;
 

@@ -1,11 +1,14 @@
 package com.example.leruyn.weatherappmvvm.view;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.leruyn.weatherappmvvm.R;
+import com.example.leruyn.weatherappmvvm.utils.DialogUtils;
 import com.example.leruyn.weatherappmvvm.utils.eventbus.Events;
 import com.example.leruyn.weatherappmvvm.utils.eventbus.GlobalBus;
 import com.example.leruyn.weatherappmvvm.viewmodel.SplashScreenModel;
@@ -28,7 +31,6 @@ public class SplashScreenActivity extends AppCompatActivity implements Observer 
 
 
         initDataBinding();
-        setupObserver(splashScreenModel);
 
         DataBindingUtil.setContentView(this, R.layout.activity_splash_screen);
     }
@@ -36,9 +38,15 @@ public class SplashScreenActivity extends AppCompatActivity implements Observer 
     private void initDataBinding() {
         if (!GlobalBus.getBus().isRegistered(this))
             GlobalBus.getBus().register(this);
-        splashScreenModel = new SplashScreenModel(this);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        splashScreenModel = new SplashScreenModel(this);
+        setupObserver(splashScreenModel);
+    }
 
     public void setupObserver(Observable observable) {
         observable.addObserver(this);
@@ -52,8 +60,7 @@ public class SplashScreenActivity extends AppCompatActivity implements Observer 
     protected void onDestroy() {
         super.onDestroy();
         splashScreenModel.reset();
-        if (!GlobalBus.getBus().isRegistered(this))
-            GlobalBus.getBus().unregister(this);
+
     }
 
     @Override
@@ -63,11 +70,45 @@ public class SplashScreenActivity extends AppCompatActivity implements Observer 
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe()
     public void insertDataBase(Events.insertDataBase insertDataBase) {
-        if (insertDataBase.getStatus()) {
-            startActivity(new Intent(this, WeatherActivity.class));
-            finish();
+        if (GlobalBus.getBus().isRegistered(this))
+            GlobalBus.getBus().unregister(this);
+
+        new CountDownTimer(5000, 1000) {
+            public void onTick(long ms) {
+            }
+
+            public void onFinish() {
+                Intent intent = new Intent(SplashScreenActivity.this, WeatherActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
+        }.start();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void changeStatusGPS(Events.changeStatusGPS changeStatusGPS) {
+        if (changeStatusGPS.getStatus()) {
+            if (splashScreenModel.gpsDialog != null) {
+                if (splashScreenModel.gpsDialog.isShowing()) {
+                    splashScreenModel.gpsDialog.dismiss();
+                }
+            }
+            if (splashScreenModel != null) {
+                splashScreenModel.fetchWeatherList(this);
+            }
+        } else {
+            if (splashScreenModel.gpsDialog == null) {
+                splashScreenModel.gpsDialog = DialogUtils.buildAlertMessageNoGps(this);
+                splashScreenModel.gpsDialog.show();
+            } else {
+                if (splashScreenModel.gpsDialog.isShowing()) {
+                    splashScreenModel.gpsDialog.show();
+                }
+            }
         }
     }
+
+
 }

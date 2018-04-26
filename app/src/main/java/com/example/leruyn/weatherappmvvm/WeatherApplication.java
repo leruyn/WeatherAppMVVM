@@ -1,7 +1,9 @@
 package com.example.leruyn.weatherappmvvm;
 
+import android.app.AlertDialog;
 import android.app.Application;
 import android.content.Context;
+import android.location.Location;
 import android.location.LocationManager;
 import android.util.Log;
 
@@ -9,7 +11,9 @@ import com.example.leruyn.weatherappmvvm.data.WeatherFactory;
 import com.example.leruyn.weatherappmvvm.data.WeatherResponse;
 import com.example.leruyn.weatherappmvvm.data.WeatherService;
 import com.example.leruyn.weatherappmvvm.data.dao.WeatherDao;
-import com.example.leruyn.weatherappmvvm.model.City;
+import com.example.leruyn.weatherappmvvm.utils.DialogUtils;
+import com.example.leruyn.weatherappmvvm.utils.InternetUtils;
+import com.example.leruyn.weatherappmvvm.utils.listener.MyLocation;
 
 import io.reactivex.Scheduler;
 import io.reactivex.schedulers.Schedulers;
@@ -24,10 +28,10 @@ import static org.greenrobot.eventbus.EventBus.TAG;
  */
 public class WeatherApplication extends Application {
 
-    private WeatherService weatherService;
     private Scheduler scheduler;
-    private static Context contextApplication;
     public static WeatherDao weatherDao;
+
+    private static WeatherService weatherService;
 
     private static WeatherApplication get(Context context) {
 
@@ -35,8 +39,10 @@ public class WeatherApplication extends Application {
     }
 
     public static WeatherApplication create(Context context) {
-        contextApplication = context;
         weatherDao = new WeatherDao(context);
+        if (weatherService == null) {
+            weatherService = WeatherFactory.create();
+        }
         return WeatherApplication.get(context);
     }
 
@@ -64,24 +70,8 @@ public class WeatherApplication extends Application {
         this.scheduler = scheduler;
     }
 
-    public void fetchWeatherList(String lat, String lon) {
 
-        Call<WeatherResponse> call = weatherService.getWeatherData(lat, lon);
-        call.enqueue(new Callback<WeatherResponse>() {
-            @Override
-            public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
-                Log.d(TAG, "request success");
-                if (response.body().getList() != null) {
-                    weatherDao.deleteTable();
-                    weatherDao.addWeatherTable(response.body());
-                }
-            }
 
-            @Override
-            public void onFailure(Call<WeatherResponse> call, Throwable t) {
-                Log.e(TAG, "request failed");
-            }
-        });
-    }
+
 
 }

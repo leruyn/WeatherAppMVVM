@@ -17,7 +17,7 @@ public interface WeatherService {
     Observable<WeatherResponse> fetchWeather(@Url String url);
 
     @GET(WeatherFactory.BASE_URL + "data/2.5/forecast?cnt=1&APPID="+ Constant.API_KEY)
-    Call<WeatherResponse> getWeatherData(@Query("lat") String lat,
-                                         @Query("lon") String lon);
+    Call<WeatherResponse> getWeatherData(@Query("lat") Double lat,
+                                         @Query("lon") Double lon);
 
 }
