@@ -37,7 +37,7 @@ public class WeatherActivity extends AppCompatActivity implements Observer {
     private void initDataBinding() {
         WeatherModel weatherModel = weatherApplication.weatherDao.getInfoWeather();
         City city = weatherApplication.weatherDao.getInfoLocation();
-        WeatherViewModel weatherViewModel = new WeatherViewModel(this, weatherModel, city);
+        weatherViewModel = new WeatherViewModel(this, weatherModel, city);
         weatherActivityBinding.setWeatherViewModel(weatherViewModel);
     }
 
@@ -45,6 +45,7 @@ public class WeatherActivity extends AppCompatActivity implements Observer {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        weatherViewModel.reset();
     }
 
     @Override

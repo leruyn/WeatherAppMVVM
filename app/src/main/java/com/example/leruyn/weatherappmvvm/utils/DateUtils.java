@@ -1,5 +1,7 @@
 package com.example.leruyn.weatherappmvvm.utils;
 
+import android.content.Context;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -11,12 +13,12 @@ import java.util.TimeZone;
  */
 
 public class DateUtils {
-    public static String formatTimeByIso8601UTC(long timeInMillis) {
-        return formatTimeByIso8601UTC(getDateInMillis(timeInMillis));
+    public static String formatTimeByIso8601UTC(long timeInMillis, Context context) {
+        return formatTimeByIso8601UTC(getDateInMillis(timeInMillis), context);
     }
 
-    public static String formatTimeByIso8601UTC(final Date date) {
-        return formatTimeByIso8601UTC(date, Locale.US);
+    public static String formatTimeByIso8601UTC(final Date date, Context context) {
+        return formatTimeByIso8601UTC(date, context.getResources().getConfiguration().locale);
     }
 
     public static String formatTimeByIso8601UTC(final Date date, Locale locale) {

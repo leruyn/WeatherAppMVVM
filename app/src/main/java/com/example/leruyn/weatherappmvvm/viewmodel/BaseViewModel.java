@@ -133,4 +133,5 @@ public class BaseViewModel extends Observable implements NetworkStateReceiver.Ne
 
         }
     }
+
 }

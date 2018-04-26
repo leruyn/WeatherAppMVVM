@@ -48,12 +48,17 @@ public class WeatherViewModel extends BaseViewModel {
     }
 
     public String getDt() {
-        return DateUtils.formatTimeByIso8601UTC(weatherModel.getDt() * 1000);
+        return DateUtils.formatTimeByIso8601UTC(weatherModel.getDt() * 1000, context);
     }
 
 
     public void reset() {
         context = null;
+        if (networkStateReceiver != null) {
+            context.unregisterReceiver(networkStateReceiver);
+        }
+        if (GlobalBus.getBus().isRegistered(this))
+            GlobalBus.getBus().unregister(this);
     }
 
 

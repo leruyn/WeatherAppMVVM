@@ -2,12 +2,14 @@ package com.example.leruyn.weatherappmvvm.viewmodel;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.databinding.ObservableInt;
 import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.example.leruyn.weatherappmvvm.WeatherApplication;
 import com.example.leruyn.weatherappmvvm.model.WeatherModel;
+import com.example.leruyn.weatherappmvvm.utils.GPSCheck;
 import com.example.leruyn.weatherappmvvm.utils.eventbus.Events;
 import com.example.leruyn.weatherappmvvm.utils.eventbus.GlobalBus;
 import com.example.leruyn.weatherappmvvm.view.WeatherActivity;
@@ -58,6 +60,7 @@ public class SplashScreenModel extends BaseViewModel {
     public void reset() {
         if (!GlobalBus.getBus().isRegistered(this))
             GlobalBus.getBus().unregister(this);
+        context.unregisterReceiver(networkStateReceiver);
         context = null;
     }
 
